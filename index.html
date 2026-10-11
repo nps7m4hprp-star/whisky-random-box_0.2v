@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#10111d">
+  <meta name="description" content="777개 랜덤박스 게임. 희귀 당첨 연출, 사용자 설정 가정가로 손익 계산, 결과 이미지 공유. 실제 구매·결제 없음.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="위스키 랜덤박스 시뮬레이터 🎁">
+  <meta property="og:description" content="777개 구성 그대로! 7.9만 원짜리 랜덤박스를 5개 뽑으면 어떻게 될까?">
+  <title>위스키 랜덤박스 | 777개 확률 시뮬레이터</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0e0f18;--surface:#171925;--card:#1d2030;--line:#333647;--text:#f5f1e7;--muted:#a4a6b4;--gold:#f6c875;--gold-dark:#bb8740;--teal:#8ad9bc;--pink:#ffa9bc;--radius:20px}
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:radial-gradient(ellipse at 50% -10%,#332344 0%,transparent 50%),var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;line-height:1.5}
+    button{font:inherit;cursor:pointer}
+    button:disabled{opacity:.47;cursor:not-allowed}
+    button:focus-visible,summary:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+    .container{max-width:890px;margin:0 auto;padding:20px 16px 60px}
+    .hero{position:relative;overflow:hidden;padding:40px 22px 28px;border-radius:26px;background:linear-gradient(140deg,#2c2032,#1e2133 64%,#211725);border:1px solid #58425b;text-align:center;box-shadow:0 20px 65px #0005}
+    .hero:before{content:"✦       ✧        ✦        ✧          ✦";position:absolute;top:5px;left:0;right:0;color:#f3c97980;font-size:26px;letter-spacing:1.9rem;pointer-events:none}
+    .eyebrow{font-size:12px;font-weight:800;letter-spacing:.13em;color:var(--gold);margin-bottom:8px}
+    h1{margin:0;font-size:clamp(30px,6.5vw,48px);line-height:1.2;letter-spacing:-.05em}
+    h1 span{color:var(--gold)}
+    .subtitle{margin:12px auto 23px;max-width:530px;font-size:14px;color:#ded6e0}
+    .statusbar{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+    .pill{background:#ffffff13;border:1px solid #ffffff26;border-radius:999px;padding:8px 12px;color:#e5dfe6;font-size:12px;font-weight:700}
+    .pill b{color:var(--gold)}
+    .section{margin-top:17px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:19px}
+    .section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:17px}
+    h2{font-size:18px;margin:0;letter-spacing:-.035em}
+    .helper,.muted{color:var(--muted);font-size:12px}
+    .selection{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+    .amount{padding:14px 5px;border-radius:13px;background:#252735;border:1px solid #414254;color:var(--text);font-weight:800}
+    .amount.selected{border-color:var(--gold);background:#403526;color:#ffe2a0;box-shadow:inset 0 0 0 1px #d4ac56}
+    .buyline{display:flex;justify-content:space-between;align-items:baseline;margin:16px 0 12px;gap:10px}
+    .buyline strong{font-size:25px;letter-spacing:-.04em;color:var(--gold)}
+    .primary{background:linear-gradient(110deg,#f8d68f,#e2ab55);color:#231c15;border:0;border-radius:14px;font-weight:900;padding:16px;box-shadow:0 8px 22px #e2ab5525}
+    .primary:not(:disabled):active{transform:translateY(1px)}
+    .block{width:100%;display:block}
+    .outline,.ghost{border:1px solid #595b6e;border-radius:11px;color:var(--text);background:#292a38;padding:10px 13px;font-size:13px;font-weight:800}
+    .ghost{background:transparent;border-color:var(--line);color:var(--muted)}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+    .stat{background:#222433;border:1px solid #333649;border-radius:13px;text-align:center;padding:14px 4px}
+    .stat .num{font-size:19px;font-weight:900;line-height:1.25;margin-top:4px;overflow-wrap:anywhere}
+    .stat .small{font-size:11px;color:var(--muted)}
+    .stock-label{display:flex;justify-content:space-between;gap:10px;font-size:12px;margin-bottom:7px;color:var(--muted)}
+    .stock-label b{color:var(--gold)}
+    .bar{width:100%;height:8px;border-radius:99px;background:#36333e;overflow:hidden}
+    .bar>div{height:100%;background:linear-gradient(90deg,#9f72b8,var(--gold));transition:width .25s}
+    .stock-note{margin-top:8px;color:var(--muted);font-size:11px}
+    .boxes{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+    .boxbtn{min-height:130px;border-radius:14px;border:1px solid #705776;background:radial-gradient(circle at top,#4b3456,#24263a 74%);color:var(--text);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px;gap:7px;transition:transform .2s,border-color .2s;position:relative}
+    .boxbtn:not(:disabled):hover{transform:translateY(-4px);border-color:var(--gold)}
+    .boxbtn .emoji{font-size:clamp(29px,6vw,43px);filter:drop-shadow(0 5px 8px #0004);line-height:1.2}
+    .boxbtn .caption{font-size:11px;color:#f0e3df;font-weight:800;text-align:center}
+    .boxbtn.open{background:#252938;border-color:#3e4253;cursor:default}
+    .boxbtn.open.rare{background:linear-gradient(145deg,#40311c,#202838);border-color:var(--gold)}
+    .boxbtn.open .caption{font-size:10px;overflow-wrap:anywhere}
+    .boxbtn.open .emoji{font-size:30px}
+    .boxbtn.reveal-animation{animation:pop .32s both}
+    @keyframes pop{0%{transform:scale(.78) rotate(-4deg);opacity:.6}70%{transform:scale(1.08) rotate(2deg)}100%{transform:scale(1);opacity:1}}
+    .actions{display:flex;gap:9px;margin-top:13px;justify-content:flex-end;flex-wrap:wrap}
+    .result-title{margin:17px 0 9px;font-size:14px;font-weight:900}
+    .result-list{list-style:none;padding:0;margin:0;display:grid;gap:7px}
+    .result-list li{background:#242637;border:1px solid #383a4c;border-radius:10px;padding:11px 12px;display:flex;align-items:center;gap:10px;font-size:12px}
+    .result-list li.rare{border-color:#a78c54;background:#302b29}
+    .result-list .number{font-size:11px;color:var(--muted);min-width:26px}
+    .result-list .name{flex:1;font-weight:750}
+    .tier{font-size:10px;white-space:nowrap;color:#211e19;background:var(--gold);border-radius:99px;padding:3px 7px;font-weight:900}
+    .summary{padding:16px 12px;text-align:center;margin-top:12px;border-radius:13px;background:#30283a;border:1px solid #5c4565}
+    .summary strong{display:block;font-size:19px;color:var(--gold)}
+    .summary span{font-size:12px;color:#d5c9d6}
+    details summary{cursor:pointer;font-size:14px;font-weight:800;list-style:none;display:flex;justify-content:space-between}
+    details summary::after{content:"⌄";color:var(--gold)}
+    details[open] summary::after{content:"⌃"}
+    table{width:100%;border-collapse:collapse;font-size:12px;margin-top:14px}
+    th,td{padding:10px 5px;border-bottom:1px solid var(--line);text-align:left}
+    th{color:var(--muted);font-size:11px;font-weight:800}
+    td:nth-child(2),td:nth-child(3),th:nth-child(2),th:nth-child(3){text-align:right;white-space:nowrap}
+    .rarename{color:#f3c875}
+    footer{color:#9393a4;font-size:11px;line-height:1.8;text-align:center;margin:20px 6px}
+    .hidden{display:none!important}
+    .notice{font-size:12px;color:var(--muted);margin:11px 0 0;text-align:center}
+    .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#f0d49b;color:#211d20;border-radius:99px;padding:11px 20px;font-size:12px;font-weight:900;box-shadow:0 8px 20px #0008;z-index:100;max-width:90%;text-align:center}
+    @media(max-width:510px){.container{padding:10px 11px 38px}.hero{padding:34px 12px 22px}.section{padding:14px}.boxes{gap:6px}.boxbtn{min-height:107px;padding:7px 3px}.boxbtn .caption{font-size:10px}.boxbtn.open .caption{font-size:9px}.stats{gap:5px}.stat .num{font-size:16px}.stat .small{font-size:10px}.buyline strong{font-size:22px}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+  /* Community simulator add-ons: valuation, image sharing, rare reveal */
+.value-panel{margin-top:18px;padding:16px;border:1px solid #554568;background:linear-gradient(125deg,#302439,#1c2530);border-radius:16px}
+.value-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.value-head h3{font-size:16px;margin:0;color:#ffe0a0}
+.value-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+.value-item{padding:11px 6px;background:#141b28a8;border:1px solid #514355;border-radius:11px;text-align:center;min-width:0}
+.value-item span{display:block;color:#b9acc0;font-size:11px}
+.value-item strong{display:block;margin-top:5px;font-size:clamp(12px,2.2vw,20px);overflow-wrap:anywhere}
+.value-item strong.positive{color:#8addaf}.value-item strong.negative{color:#ffadbd}
+.value-note{font-size:11px;color:#b9b1bf;line-height:1.65;margin:10px 0 0}
+.price-guide{margin:16px 0 0;padding:15px 18px;background:#1b1c2a;border:1px solid #3d3b54;border-radius:16px}
+.price-guide>summary{color:#ffe0a0}
+.price-row{display:grid;grid-template-columns:minmax(0,1fr) 126px;align-items:center;gap:9px;border-bottom:1px solid #363548;padding:9px 0}
+.price-row label{font-size:12px;line-height:1.45}.price-row input{width:100%;min-width:0;padding:9px;border-radius:9px;border:1px solid #5c5c73;background:#121522;color:#f5f1e7;font:inherit;text-align:right}
+.price-actions{display:flex;justify-content:flex-end;margin-top:12px}
+.export-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin-top:9px}
+.export-actions button{border-radius:11px;border:1px solid #b48d50;background:#433426;color:#ffe4ae;padding:10px 13px;font-size:12px;font-weight:850}
+.rare-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:500;isolation:isolate;background:#080710d9;padding:16px;animation:fade-in .22s ease both;overflow:hidden}
+.rare-overlay.hidden{display:none!important}
+.rare-pop{position:relative;z-index:2;text-align:center;background:radial-gradient(ellipse at top,#55354e,#1e1b2b 78%);border:2px solid #ecc47d;border-radius:25px;padding:34px 22px;max-width:460px;width:100%;box-shadow:0 0 85px #fbc77538,0 16px 60px #0009;animation:pop-in .48s cubic-bezier(.19,1,.22,1) both}
+.rare-pop.jackpot{background:radial-gradient(ellipse at top,#67441f,#211c2c 76%);box-shadow:0 0 105px #ffcd6388,0 16px 60px #000a}
+.rare-pop .glow-icon{font-size:70px;line-height:1.3;display:block;filter:drop-shadow(0 0 20px #ffde99)}
+.rare-pop .rare-tag{color:#f6cc87;font-size:12px;font-weight:900;letter-spacing:.22em}
+.rare-pop h2{font-size:clamp(23px,6vw,33px);margin:12px 0 8px;color:#ffebc8;line-height:1.25}
+.rare-pop p{font-size:14px;color:#e6d9e6;margin:9px 0 24px;overflow-wrap:anywhere}
+.rare-pop button{width:100%;border:0;border-radius:12px;padding:14px;background:#f7cf87;color:#261a13;font-weight:900}
+.confetti{position:absolute;top:-10%;left:var(--x);width:var(--s);height:calc(var(--s)*1.8);background:var(--c);transform:rotate(var(--r));opacity:0;animation:fall var(--t) linear var(--d) forwards;z-index:1;border-radius:2px}
+@keyframes fall{0%{transform:translateY(0) rotate(0);opacity:1}85%{opacity:1}100%{transform:translateY(112vh) rotate(750deg);opacity:0}}
+@keyframes pop-in{from{transform:scale(.66) translateY(40px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+@keyframes fade-in{from{opacity:0}to{opacity:1}}
+@media(max-width:510px){.value-grid{gap:5px}.value-item{padding:10px 4px}.value-item span{font-size:10px}.price-row{grid-template-columns:minmax(0,1fr) 107px}}
+@media(prefers-reduced-motion:reduce){.rare-overlay,.rare-pop,.confetti{animation:none!important}.confetti{display:none}}
+
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header class="hero">
+      <div class="eyebrow">OCTOBER · LUCKY DRAW</div>
+      <h1>위스키 <span>랜덤박스</span> 🎁</h1>
+      <p class="subtitle">글렌글라사 12년부터 와일드 터키 골드포일까지. 실제 공개된 777개 상품 구성을 그대로 반영한 비공식 시뮬레이터!</p>
+      <div class="statusbar">
+        <div class="pill">💰 1회 <b>79,000원</b> (가상)</div>
+        <div class="pill">🎲 <b>777개</b> 한정 구성</div>
+        <div class="pill">🏆 특수 당첨 <b>66개</b></div>
+      </div>
+    </header>
+
+    <section class="section" aria-label="구매 선택">
+      <div class="section-head"><h2>01. 몇 개 뽑을까?</h2><span class="helper">무료 체험 · 결제 없음</span></div>
+      <div class="selection" id="selection">
+        <button class="amount" type="button" data-qty="1">1개 뽑기</button>
+        <button class="amount selected" type="button" data-qty="5">5개 뽑기</button>
+        <button class="amount" type="button" data-qty="10">10개 뽑기</button>
+      </div>
+      <div class="buyline"><span class="muted">가상 결제 금액</span><strong id="totalPrice">395,000원</strong></div>
+      <button class="primary block" id="buy" type="button">🎁 5개 랜덤박스 받기</button>
+      <p class="notice" id="buyHint">추첨 시 현재 개인 재고에서 수량만큼 차감됩니다.</p>
+    </section>
+
+    <section class="section hidden" id="game" aria-label="박스 개봉">
+      <div class="section-head"><h2>02. 박스를 터치해서 개봉!</h2><span class="helper" id="openCount">0 / 5 개봉</span></div>
+      <div class="boxes" id="boxes"></div>
+      <div class="actions"><button type="button" class="outline" id="openAll">✨ 전부 개봉</button><button type="button" class="outline hidden" id="share">📤 결과 공유</button></div>
+      <div class="result-title hidden" id="resultHeading">당첨 목록</div>
+      <ul class="result-list" id="results" aria-live="polite"></ul>
+      <div class="summary hidden" id="summary"></div>
+    </section>
+
+    <section class="section">
+      <div class="section-head"><h2>내 시뮬레이션 기록</h2><button class="ghost" type="button" id="reset">↻ 기록 초기화</button></div>
+      <div class="stats">
+        <div class="stat"><div class="small">누적 가상 지출</div><div class="num" id="spent">0원</div></div>
+        <div class="stat"><div class="small">개봉한 박스</div><div class="num" id="openedTotal">0개</div></div>
+        <div class="stat"><div class="small">특수 당첨</div><div class="num" id="rareTotal">0개</div></div>
+      </div>
+      <div style="height:20px"></div>
+      <div class="stock-label"><span>내 가상 재고 잔량</span><b id="stock">777 / 777</b></div>
+      <div class="bar"><div id="stockBar" style="width:100%"></div></div>
+      <div class="stock-note">재고와 기록은 이 브라우저에만 저장되며, 다른 사람과 공유되지 않습니다.</div>
+    </section>
+
+    <section class="section">
+      <details id="odds">
+        <summary>전체 12종 당첨 확률 및 남은 수량 보기</summary>
+        <table><thead><tr><th>제품명</th><th>남은 수량</th><th>최초 확률</th></tr></thead><tbody id="oddsBody"></tbody></table>
+        <p class="muted">공개 이미지의 수량을 기준으로 계산한 정확한 확률입니다. 소수 둘째 자리까지 반올림하며, 매번 남은 재고에서 중복 없이 추첨합니다.</p>
+      </details>
+    </section>
+    <footer>비공식 팬 제작 확률 시뮬레이터 · 실제 판매처와 무관합니다.<br>당첨 상품, 구성, 가격은 제공된 홍보 이미지 기준이며 모든 거래와 지출은 가상입니다.<br>본 게임은 실제 제품 구매, 경품 지급, 현금 결제를 지원하지 않습니다.</footer>
+  </main>
+  <div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
+  <script>
+    'use strict';
+    // 공개된 홍보 이미지의 수량을 그대로 사용합니다. 총 777개.
+    const PRIZES = [
+      {name:'와일드 터키 골드포일 에디션 16년',short:'WT 골드포일 16년',qty:20},
+      {name:'글렌 기어리 12년',short:'글렌 기어리 12년',qty:10},
+      {name:'와일드 터키 12년',short:'와일드 터키 12년',qty:8},
+      {name:'러셀 리저브 10년 LL/MF',short:'러셀 10년 LL/MF',qty:5},
+      {name:'글렌드로낙 18년 구형',short:'글렌드로낙 18년 구형',qty:10},
+      {name:'스태그 주니어',short:'스태그 주니어',qty:4},
+      {name:'러셀 리저브 싱글 릭하우스',short:'러셀 싱글 릭하우스',qty:3},
+      {name:'글렌알라키 10년 CS 배치 6~10번 세트',short:'글렌알라키 5병 세트',qty:1},
+      {name:'러셀 리저브 15년 2024',short:'러셀 15년 2024',qty:4},
+      {name:'히든 컬렉션',short:'히든 컬렉션',qty:1},
+      {name:'글렌글라사 12년 글렌캐런 패키지',short:'글렌글라사 12년',qty:623},
+      {name:'글렌모렌지 라산타 15년',short:'라산타 15년',qty:88}
+    ];
+    const ORIGINAL=777, UNIT=79000, STORAGE_KEY='whisky_random_box_v1';
+    const money = n=>n.toLocaleString('ko-KR')+'원';
+    const el=id=>document.getElementById(id);
+    const fresh=()=>({stock:PRIZES.map(p=>p.qty),purchases:0,opened:0,rare:0,round:0,game:[],revealed:[]});
+    function load(){
+      try{
+        const s=JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if(!s||!Array.isArray(s.stock)||s.stock.length!==PRIZES.length||!s.stock.every((n,i)=>Number.isInteger(n)&&n>=0&&n<=PRIZES[i].qty))return fresh();
+        if(!Array.isArray(s.game)||!Array.isArray(s.revealed)||s.game.some(i=>!Number.isInteger(i)||i<0||i>=PRIZES.length)||s.revealed.length!==s.game.length)return fresh();
+        if(!['purchases','opened','rare','round'].every(k=>Number.isInteger(s[k])&&s[k]>=0))return fresh();
+        return s;
+      }catch(e){return fresh();}
+    }
+    let state=load(), qty=5;
+    function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){/* 프라이빗 브라우징에서 저장이 거부되어도 게임은 진행 */}}
+    // crypto.getRandomValues를 사용해 0..max-1 사이의 정수를 편향 없이 추첨.
+    function randomInt(max){
+      if(max<=0)return 0;
+      if(!window.crypto||!crypto.getRandomValues)return Math.floor(Math.random()*max);
+      const range=0x100000000, limit=range-(range%max);let x;
+      do{x=crypto.getRandomValues(new Uint32Array(1))[0];}while(x>=limit);
+      return x%max;
+    }
+    const remaining=()=>state.stock.reduce((a,b)=>a+b,0);
+    const complete=()=>state.game.length===0||state.revealed.every(Boolean);
+    function buy(){
+      if(!complete()){notify('현재 박스부터 모두 개봉해 주세요.');return;}
+      if(remaining()<qty){notify('가상 재고가 부족합니다. 초기화 후 다시 플레이해 주세요.');return;}
+      const next=[];let sum=remaining();
+      for(let k=0;k<qty;k++){
+        let ticket=randomInt(sum);
+        for(let i=0;i<state.stock.length;i++){
+          if(ticket<state.stock[i]){next.push(i);state.stock[i]--;sum--;break;}
+          ticket-=state.stock[i];
+        }
+      }
+      state.game=next;state.revealed=next.map(()=>false);state.purchases+=qty;state.round++;
+      save();render();el('game').scrollIntoView({behavior:'smooth',block:'start'});
+    }
+    function reveal(i){
+      if(state.revealed[i])return;
+      state.revealed[i]=true;state.opened++;
+      if(state.game[i]<10)state.rare++;
+      save();render();
+      if(state.game[i]<10){notify('🏆 특별 당첨! '+PRIZES[state.game[i]].short);}
+    }
+    function revealAll(){
+      for(let i=0;i<state.game.length;i++){
+        if(!state.revealed[i]){
+          state.revealed[i]=true;state.opened++;
+          if(state.game[i]<10)state.rare++;
+        }
+      }
+      save();render();
+      if(state.game.some(i=>i<10))notify('🏆 특별 당첨이 나왔어요!');
+    }
+    function renderStats(){
+      el('spent').textContent=money(state.purchases*UNIT);
+      el('openedTotal').textContent=state.opened.toLocaleString('ko-KR')+'개';
+      el('rareTotal').textContent=state.rare.toLocaleString('ko-KR')+'개';
+      el('stock').textContent=remaining()+' / '+ORIGINAL;
+      el('stockBar').style.width=(remaining()/ORIGINAL*100)+'%';
+    }
+    function renderGame(){
+      const active=state.game.length>0;
+      el('game').classList.toggle('hidden',!active);
+      if(!active)return;
+      el('openCount').textContent=state.revealed.filter(Boolean).length+' / '+state.game.length+' 개봉';
+      const boxes=el('boxes');boxes.replaceChildren();
+      state.game.forEach((id,i)=>{
+        const shown=state.revealed[i],rare=id<10;
+        const b=document.createElement('button');b.type='button';
+        b.className='boxbtn'+(shown?' open reveal-animation':'')+(shown&&rare?' rare':'');
+        b.disabled=shown;
+        b.setAttribute('aria-label',shown?(i+1)+'번 '+PRIZES[id].name:(i+1)+'번 랜덤박스 개봉');
+        const emoji=document.createElement('div');emoji.className='emoji';emoji.textContent=shown?(rare?'🏆':'🥃'):'🎁';
+        const label=document.createElement('div');label.className='caption';label.textContent=shown?PRIZES[id].short:(i+1)+'번 OPEN';
+        b.append(emoji,label);b.addEventListener('click',()=>reveal(i));boxes.appendChild(b);
+      });
+      const list=el('results');list.replaceChildren();
+      const count=state.revealed.filter(Boolean).length;
+      el('resultHeading').classList.toggle('hidden',count===0);
+      state.game.forEach((id,i)=>{
+        if(!state.revealed[i])return;
+        const item=document.createElement('li');if(id<10)item.className='rare';
+        const number=document.createElement('span');number.className='number';number.textContent='#'+(i+1);
+        const name=document.createElement('span');name.className='name';name.textContent=PRIZES[id].name;
+        item.append(number,name);
+        if(id<10){const badge=document.createElement('span');badge.className='tier';badge.textContent='SPECIAL';item.appendChild(badge);}
+        list.appendChild(item);
+      });
+      el('openAll').classList.toggle('hidden',complete());
+      el('share').classList.toggle('hidden',!complete());
+      const summary=el('summary');summary.classList.toggle('hidden',!complete());
+      if(complete()){
+        const rareCount=state.game.filter(i=>i<10).length;
+        summary.replaceChildren();
+        const title=document.createElement('strong');title.textContent=rareCount?'🏆 특별 당첨 '+rareCount+'개!':'📦 개봉 완료!';
+        const detail=document.createElement('span');detail.textContent='글렌글라사 '+state.game.filter(i=>i===10).length+'개 · 라산타 '+state.game.filter(i=>i===11).length+'개 · 기타 '+rareCount+'개';
+        summary.append(title,detail);
+      }
+    }
+    function renderOdds(){
+      const table=el('oddsBody');table.replaceChildren();
+      PRIZES.forEach((p,i)=>{
+        const tr=document.createElement('tr'),n=document.createElement('td'),stock=document.createElement('td'),percent=document.createElement('td');
+        n.textContent=p.name; if(i<10)n.className='rarename';
+        stock.textContent=state.stock[i]+' / '+p.qty;
+        percent.textContent=(p.qty/ORIGINAL*100).toFixed(2)+'%';
+        tr.append(n,stock,percent);table.appendChild(tr);
+      });
+    }
+    function render(){
+      document.querySelectorAll('.amount').forEach(b=>b.classList.toggle('selected',Number(b.dataset.qty)===qty));
+      el('totalPrice').textContent=money(qty*UNIT);
+      el('buy').textContent='🎁 '+qty+'개 랜덤박스 받기';
+      el('buy').disabled=!complete()||remaining()<qty;
+      el('buyHint').textContent=!complete()?'현재 박스를 모두 개봉해야 다음 추첨을 진행할 수 있습니다.':remaining()<qty?'재고 부족! 아래 기록 초기화를 눌러 다시 시작하세요.':'추첨 시 개인 가상 재고에서 '+qty+'개 차감됩니다.';
+      renderStats();renderGame();renderOdds();
+    }
+    let toastTimeout;
+    function notify(msg){
+      const t=el('toast');t.textContent=msg;t.classList.remove('hidden');
+      clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>t.classList.add('hidden'),2800);
+    }
+    async function share(){
+      if(!complete()||!state.game.length)return;
+      const lines=['🎁 위스키 랜덤박스 '+state.game.length+'개 결과','가상 지출: '+money(state.game.length*UNIT),...state.game.map((id,i)=>(i+1)+'. '+PRIZES[id].name)];
+      // 공유 텍스트에는 호스팅 URL이나 개인 GitHub 사용자명을 넣지 않습니다.
+      const str=lines.join('\n');
+      try{
+        if(navigator.share){await navigator.share({title:'위스키 랜덤박스 결과',text:str});return;}
+        if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(str);notify('결과가 복사됐어요!');return;}
+      }catch(e){if(e.name==='AbortError')return;}
+      window.prompt('아래 결과를 복사하세요',str);
+    }
+    document.querySelectorAll('.amount').forEach(b=>b.addEventListener('click',()=>{qty=Number(b.dataset.qty);render();}));
+    el('buy').addEventListener('click',buy);
+    el('openAll').addEventListener('click',()=>revealAll());
+    el('share').addEventListener('click',share);
+    el('reset').addEventListener('click',()=>{
+      if(!confirm('지금까지의 가상 구매와 당첨 기록, 개인 재고를 모두 초기화할까요?'))return;
+      state=fresh();save();render();notify('777개 재고가 새로 채워졌어요.');
+    });
+    render();
+
+/* Simulation add-ons. All valuations are user-editable fictional assumptions, NOT real quotes. */
+(() => {
+  'use strict';
+  const PRICE_KEY='whisky_box_price_assumptions_v2';
+  const TRACK_KEY='whisky_box_tracked_results_v2';
+  // Sample game assumptions only. These are not verified market prices.
+  const examples=[1200000,90000,90000,200000,450000,250000,650000,700000,850000,null,79000,100000];
+  const read=(key)=>{try{return JSON.parse(localStorage.getItem(key));}catch(e){return null;}};
+  const write=(key,val)=>{try{localStorage.setItem(key,JSON.stringify(val));}catch(e){/* optional persistence */}};
+  const validPrice=n=>n===null||(Number.isInteger(n)&&n>=0&&n<=1000000000);
+  const p=read(PRICE_KEY);
+  let prices=Array.isArray(p)&&p.length===PRIZES.length&&p.every(validPrice)?p:examples.slice();
+  let tracked=read(TRACK_KEY);
+  if(!tracked||!Array.isArray(tracked.wins)||tracked.wins.length!==PRIZES.length||!tracked.wins.every(n=>Number.isInteger(n)&&n>=0)){
+    tracked={wins:PRIZES.map((_,i)=>state.game.filter((id,j)=>id===i&&state.revealed[j]).length)};
+  }
+  const knownWins=()=>tracked.wins.reduce((a,b)=>a+b,0);
+  function summary(){
+    let total=0,unknown=0;
+    prices.forEach((p,i)=>{if(p===null)unknown+=tracked.wins[i];else total+=p*tracked.wins[i];});
+    return {total,cost:knownWins()*UNIT,profit:total-knownWins()*UNIT,unknown,count:knownWins()};
+  }
+  // DOM additions leave the existing game and original persistent state intact.
+  const stats=document.querySelector('.stats');
+  const panel=document.createElement('section');panel.className='value-panel';
+  panel.innerHTML='<div class="value-head"><h3>💸 누적 가상 손익</h3><span class="helper">개봉한 박스 기준</span></div><div class="value-grid"><div class="value-item"><span>평가액 합계</span><strong id="estimatedReturn">-</strong></div><div class="value-item"><span>해당 구매비용</span><strong id="estimatedCost">-</strong></div><div class="value-item"><span>추정 순손익</span><strong id="netProfit">-</strong></div></div><p class="value-note" id="valueNote">※ 기본 가정가는 게임용 임의 예시입니다. 실제 판매가·중고 시세가 아닙니다. 아래에서 직접 수정할 수 있습니다.</p>';
+  stats.after(panel);
+  const editor=document.createElement('details');editor.className='price-guide';
+  const exp='<summary>✏️ 바틀별 가정 가격 수정하기 (게임용)</summary><p class="value-note">기본값은 사실 확인된 시세가 아닌 임의 예시 금액입니다. 본인이 생각하는 가치를 입력해야 그 기준으로 손익이 계산됩니다. 히든 컬렉션은 가치를 알 수 없어 미설정입니다.</p><div id="priceRows"></div><div class="price-actions"><button class="ghost" type="button" id="restorePrices">임의 예시 가격으로 되돌리기</button></div>';
+  editor.innerHTML=exp;
+  document.querySelector('footer').before(editor);
+  const priceRows=document.getElementById('priceRows');
+  PRIZES.forEach((prize,i)=>{
+    const row=document.createElement('div');row.className='price-row';
+    const label=document.createElement('label');label.textContent=prize.short;label.htmlFor='assumePrice'+i;
+    const inp=document.createElement('input');inp.id='assumePrice'+i;inp.type='number';inp.min='0';inp.max='1000000000';inp.step='1000';inp.inputMode='numeric';inp.placeholder='미설정';inp.value=prices[i]===null?'':prices[i];
+    inp.addEventListener('input',()=>{
+      if(inp.value.trim()==='')prices[i]=null;
+      else if(validPrice(Number(inp.value)))prices[i]=Number(inp.value);
+      else return;
+      write(PRICE_KEY,prices);renderExtras();
+    });
+    row.append(label,inp);priceRows.append(row);
+  });
+  document.getElementById('restorePrices').addEventListener('click',()=>{
+    prices=examples.slice();write(PRICE_KEY,prices);
+    priceRows.querySelectorAll('input').forEach((inp,i)=>{inp.value=prices[i]===null?'':prices[i];});renderExtras();notify('게임용 가정 가격으로 초기화했습니다.');
+  });
+  const actionWrap=document.createElement('div');actionWrap.className='export-actions hidden';actionWrap.id='imageActions';
+  actionWrap.innerHTML='<button type="button" id="savePng">🖼 결과 이미지 저장</button><button type="button" id="sharePng">📤 이미지 공유</button>';
+  document.querySelector('#game .actions').after(actionWrap);
+  const overlay=document.createElement('div');overlay.id='rareOverlay';overlay.className='rare-overlay hidden';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label','희귀 위스키 당첨');
+  overlay.innerHTML='<div class="rare-pop" id="rarePop"><span class="glow-icon" id="rareIcon">🏆</span><div class="rare-tag" id="rareTag">SPECIAL DRAW</div><h2>희귀 당첨!</h2><p id="rareBottle"></p><button type="button" id="closeRare">결과 확인하기</button></div>';
+  document.body.append(overlay);
+  function closeOverlay(){overlay.classList.add('hidden');overlay.querySelectorAll('.confetti').forEach(e=>e.remove());}
+  document.getElementById('closeRare').addEventListener('click',closeOverlay);
+  overlay.addEventListener('click',e=>{if(e.target===overlay)closeOverlay();});
+  window.addEventListener('keydown',e=>{if(e.key==='Escape'&&!overlay.classList.contains('hidden'))closeOverlay();});
+  function celebrate(id){
+    if(id>=10)return;
+    const grand=[0,4,5,6,7,8,9].includes(id);
+    const pop=document.getElementById('rarePop');pop.classList.toggle('jackpot',grand);
+    pop.querySelector('h2').textContent=grand?'🎉 초특급 당첨!':'🏆 특별 당첨!';
+    document.getElementById('rareTag').textContent=grand?'JACKPOT · TOP PRIZE':'SPECIAL DRAW';
+    document.getElementById('rareIcon').textContent=grand?'👑':'🏆';
+    document.getElementById('rareBottle').textContent=PRIZES[id].name+' · 전체 '+PRIZES[id].qty+'개 ('+(PRIZES[id].qty/ORIGINAL*100).toFixed(2)+'%)';
+    overlay.querySelectorAll('.confetti').forEach(e=>e.remove());
+    if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+      for(let i=0;i<(grand?90:40);i++){
+        const dot=document.createElement('i');dot.className='confetti';
+        dot.style.setProperty('--x',(Math.random()*100)+'%');dot.style.setProperty('--s',(5+Math.random()*9)+'px');
+        dot.style.setProperty('--t',(2.3+Math.random()*2.4)+'s');dot.style.setProperty('--d',(Math.random()*0.45)+'s');
+        dot.style.setProperty('--c',['#ffdf8f','#f6aab9','#f9f2e3','#a5e2cc','#e3b5f6'][i%5]);
+        overlay.appendChild(dot);
+      }
+    }
+    overlay.classList.remove('hidden');document.getElementById('closeRare').focus();
+  }
+  function addWin(id){tracked.wins[id]++;write(TRACK_KEY,tracked);}
+  const oldReveal=reveal;
+  reveal=function(i){if(state.revealed[i])return;const id=state.game[i];oldReveal(i);addWin(id);renderExtras();celebrate(id);};
+  const oldRevealAll=revealAll;
+  revealAll=function(){
+    const pending=state.game.filter((id,i)=>!state.revealed[i]);
+    oldRevealAll();pending.forEach(addWin);renderExtras();
+    const special=pending.filter(id=>id<10).sort((a,b)=>PRIZES[a].qty-PRIZES[b].qty);
+    if(special.length)celebrate(special[0]);
+  };
+  const oldRender=render;
+  render=function(){oldRender();renderExtras();};
+  function renderExtras(){
+    const x=summary();
+    document.getElementById('estimatedReturn').textContent=money(x.total)+(x.unknown?' + 미평가':'');
+    document.getElementById('estimatedCost').textContent=money(x.cost);
+    const profit=document.getElementById('netProfit');
+    profit.textContent=x.unknown?'미평가 '+x.unknown+'건':(x.profit>=0?'+':'−')+money(Math.abs(x.profit));
+    profit.classList.toggle('positive',!x.unknown&&x.profit>=0);
+    profit.classList.toggle('negative',!x.unknown&&x.profit<0);
+    document.getElementById('valueNote').textContent='※ 사용자가 설정한 가정가로 계산 · 기록된 '+x.count+'개 개봉분 기준. 가격 미설정 상품은 손익 미산정. 이전 버전의 과거 당첨 내역은 복원할 수 없습니다.';
+    actionWrap.classList.toggle('hidden',!state.game.length||!complete());
+  }
+  function roundRect(ctx,x,y,w,h,r){ctx.beginPath();if(ctx.roundRect){ctx.roundRect(x,y,w,h,r);}else{const z=Math.min(r,w/2,h/2);ctx.moveTo(x+z,y);ctx.lineTo(x+w-z,y);ctx.quadraticCurveTo(x+w,y,x+w,y+z);ctx.lineTo(x+w,y+h-z);ctx.quadraticCurveTo(x+w,y+h,x+w-z,y+h);ctx.lineTo(x+z,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-z);ctx.lineTo(x,y+z);ctx.quadraticCurveTo(x,y,x+z,y);ctx.closePath();}}
+  function drawReport(){
+    if(!state.game.length||!complete())throw Error('개봉을 완료해 주세요.');
+    const c=document.createElement('canvas');c.width=1080;c.height=1470;const g=c.getContext('2d');
+    const bg=g.createLinearGradient(0,0,1050,1470);bg.addColorStop(0,'#3f2c48');bg.addColorStop(.6,'#171927');bg.addColorStop(1,'#101421');g.fillStyle=bg;g.fillRect(0,0,1080,1470);
+    g.fillStyle='#f6d58c';g.font='bold 30px sans-serif';g.textAlign='center';g.fillText('WHISKY LUCKY BOX',540,95);
+    g.font='bold 64px sans-serif';g.fillStyle='#fff2d5';g.fillText('위스키 랜덤박스',540,189);
+    g.fillStyle='#c9b7d2';g.font='29px sans-serif';g.fillText(state.game.length+'개 개봉 결과  ·  비공식 가상 시뮬레이터',540,244);
+    roundRect(g,65,296,950,174,22);g.fillStyle='#ffffff11';g.fill();g.strokeStyle='#d7b77d';g.stroke();
+    g.textAlign='left';g.font='26px sans-serif';g.fillStyle='#d2c5cc';g.fillText('이번 회차 가상 지출',100,353);
+    g.font='bold 42px sans-serif';g.fillStyle='#ffe6a5';g.fillText(money(state.game.length*UNIT),100,418);
+    const roundValue=state.game.reduce((s,id)=>s+(prices[id]??0),0);
+    const notPriced=state.game.filter(id=>prices[id]===null).length;
+    g.textAlign='right';g.fillStyle='#d2c5cc';g.font='26px sans-serif';g.fillText(notPriced?'당첨 평가액 (일부 미설정)':'당첨 평가액 (가정가)',980,353);
+    g.font='bold 40px sans-serif';g.fillStyle='#a4e9c6';g.fillText(money(roundValue)+(notPriced?' + ?':''),980,418);
+    g.textAlign='left';g.font='bold 28px sans-serif';g.fillStyle='#f9db97';g.fillText('🎁 당첨 목록',88,535);
+    state.game.forEach((id,i)=>{
+      const y=555+i*72;roundRect(g,64,y,952,62,12);g.fillStyle=id<10?'#4c3834':'#292d3b';g.fill();
+      g.font='bold 24px sans-serif';g.fillStyle='#f6cb78';g.fillText(String(i+1).padStart(2,'0'),91,y+41);
+      g.font='25px sans-serif';g.fillStyle='#f3edf1';
+      let s=PRIZES[id].name;while(g.measureText(s).width>690&&s.length>3)s=s.slice(0,-2)+'…';g.fillText(s,148,y+41);
+      if(id<10){g.textAlign='right';g.font='bold 21px sans-serif';g.fillStyle='#ffd58d';g.fillText('SPECIAL',978,y+41);g.textAlign='left';}
+    });
+    g.fillStyle='#c7bccc';g.font='25px sans-serif';g.textAlign='center';
+    g.fillText('이번 회차 추정 손익: '+(notPriced?'평가 불가 (가격 미설정)':((roundValue-state.game.length*UNIT)>=0?'+':'−')+money(Math.abs(roundValue-state.game.length*UNIT))),540,1371);
+    g.fillStyle='#9c9bae';g.font='20px sans-serif';g.fillText('평가액은 게임용 임의 가정가이며 실제 판매 시세가 아닙니다.',540,1420);
+    return c;
+  }
+  const asBlob=c=>new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(Error('이미지 저장 실패')),'image/png'));
+  function download(blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='whisky-luckybox-result.png';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);}
+  async function exportPng(shareMode){
+    try{
+      const blob=await asBlob(drawReport());
+      if(shareMode&&navigator.share&&navigator.canShare){
+        const file=new File([blob],'whisky-luckybox-result.png',{type:'image/png'});
+        if(navigator.canShare({files:[file]})){
+          try{await navigator.share({files:[file],title:'위스키 랜덤박스 결과'});return;}
+          catch(e){if(e.name==='AbortError')return;}
+        }
+      }
+      download(blob);notify(shareMode?'이미지를 저장했어요. 공유할 곳에 첨부하세요.':'결과 이미지를 저장했어요.');
+    }catch(e){notify('이미지를 만들지 못했어요. 다른 브라우저로 시도해 주세요.');}
+  }
+  document.getElementById('savePng').addEventListener('click',()=>exportPng(false));
+  document.getElementById('sharePng').addEventListener('click',()=>exportPng(true));
+  document.getElementById('reset').addEventListener('click',()=>{
+    if(state.purchases===0&&state.opened===0){tracked={wins:PRIZES.map(()=>0)};write(TRACK_KEY,tracked);renderExtras();}
+  });
+  renderExtras();
+})();
+
+  </script>
+</body>
+</html>
